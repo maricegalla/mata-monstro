@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <title>Mata monstro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <template v-if="!start">
+      <div class="d-flex justify-content-evenly align-items-center m-5 p-3">
+        <img src="player.png" width="5%"/>
+        <div class="border" style="width: 300px; height: 30px">
+          <div style="height: 100%" :style="[playerColor ? {width:`${playerWidth}%`, backgroundColor: '#1070FD'} : {width:`${playerWidth}%`, backgroundColor: '#BC413B'}]"></div>
+        </div>
+        <h1>{{playerWidth}} :Jogador</h1>
+        <h1>Monstro: {{monsterWidth}}</h1>
+        <div class="border" style="width: 300px; height: 30px">
+          <div style="height: 100%" :style="[monsterColor ? {width:`${monsterWidth}%`, backgroundColor: '#1070FD'} : {width:`${monsterWidth}%`, backgroundColor: '#BC413B'}]">
+          </div>
+        </div>
+        <img src="monster.png" width="5%"/>
+      </div>
+      <div class="d-flex justify-content-evenly align-items-center m-5 p-3" v-if="ended">
+        <h1 v-html="winner()"></h1>
+      </div>
+    </template>
+    <div class="d-flex flex-column align-items-center border m-5 p-3" v-if="start">
+      <h1>Monster Game</h1>
+      <img class="py-4" src="monster.png" width="10%"/>
+      <button @click="start = !start" class="btn btn-primary">Iniciar novo jogo</button>
+    </div>
+    <div class="d-flex justify-content-evenly border m-5 p-3" v-else>
+      <button class="btn btn-danger" :disabled="ended" @click="playerAttack">Atacar</button>
+      <button class="btn btn-info" @click="restart">Recomeçar</button>
+      <button class="btn btn-warning" @click="giveUp">Sair</button>
+    </div>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        start: true,
+        player: 0,
+        monster: 0,
+        playerWidth: 100,
+        monsterWidth: 100,
+        playerColor: true,
+        monsterColor: true,
+        ended: false,
+      },
+      methods: {
+        playerAttack() {
+          this.player = Math.round(Math.random() * 10);
+          this.monster = Math.round(Math.random() * 10);
+          console.log(this.playerWidth, this.monsterWidth);
+          this.playerWidth = this.playerWidth - this.monster
+          this.monsterWidth = this.monsterWidth - this.player;
+          (this.playerWidth > 0) ? this.playerWidth : this.playerWidth = 0;
+          (this.monsterWidth > 0) ? this.monsterWidth : this.monsterWidth = 0;
+          (this.playerWidth >= 20) ? this.playerColor = true : this.playerColor = false;
+          (this.monsterWidth >= 20) ? this.monsterColor = true : this.monsterColor = false;
+          (this.playerWidth <= 0 || this.monsterWidth <= 0) ? this.winner() : this.ended = false;
+        },
+        restart() {
+          this.player = 0;
+          this.monster = 0;
+          this.playerWidth = 100;
+          this.monsterWidth = 100;
+          this.playerColor = true;
+          this.monsterColor = true;
+          this.ended = false;
+        },
+        giveUp() {
+          this.start = !this.start;
+          this.player = 0;
+          this.monster = 0;
+          this.playerWidth = 100;
+          this.monsterWidth = 100;
+          this.playerColor = true;
+          this.monsterColor = true;
+          this.ended = false;
+        },
+        winner() {
+          this.ended = true;
+          if (this.playerWidth > this.monsterWidth) {
+            return 'Parabéns!!! Você venceu!!!'
+          } if (this.playerWidth < this.monsterWidth) {
+            return 'Não foi desta vez... O monstro venceu.'
+          } if (this.playerWidth === this.monsterWidth) {
+            return 'Deu empate!'
+          }
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
