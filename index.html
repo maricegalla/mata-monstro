@@ -48,6 +48,11 @@
       <button class="btn btn-info" @click="restart">Recomeçar</button>
       <button class="btn btn-warning" @click="giveUp">Sair</button>
     </div>
+    <div v-if="logs.length" class="d-flex justify-content-evenly align-items-center">
+      <ul>
+        <li v-for="log in logs" :class="log.deco">{{log.text}}</li>
+      </ul>
+    </div>
   </div>
 
   <script>
@@ -62,6 +67,7 @@
         playerColor: true,
         monsterColor: true,
         ended: false,
+        logs: []
       },
       methods: {
         playerAttack() {
@@ -74,6 +80,9 @@
           (this.playerWidth >= 20) ? this.playerColor = true : this.playerColor = false;
           (this.monsterWidth >= 20) ? this.monsterColor = true : this.monsterColor = false;
           (this.playerWidth <= 0 || this.monsterWidth <= 0) ? this.winner() : this.ended = false;
+          const playerAttack = {text: `Jogador atingiu o monstro com ${this.player}`, deco: 'd-flex p-1 m-2 badge text-bg-success bg-opacity-50'};
+          const monsterAttack = {text: `Monstro atingiu o jogador com ${this.monster}`, deco: 'd-flex p-1 m-2 badge text-bg-danger bg-opacity-50'};
+          this.logs.unshift(playerAttack, monsterAttack)
         },
         restart() {
           this.player = 0;
@@ -83,6 +92,7 @@
           this.playerColor = true;
           this.monsterColor = true;
           this.ended = false;
+          this.logs = [];
         },
         giveUp() {
           this.start = !this.start;
@@ -93,9 +103,11 @@
           this.playerColor = true;
           this.monsterColor = true;
           this.ended = false;
+          this.logs = [];
         },
         winner() {
           this.ended = true;
+          this.logs = [];
           if (this.playerWidth > this.monsterWidth) {
             return 'Parabéns!!! Você venceu!!!'
           } if (this.playerWidth < this.monsterWidth) {
